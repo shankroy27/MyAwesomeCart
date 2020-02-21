@@ -19,6 +19,7 @@
         <h2>Step2 - Enter Address & other Details:</h2>
         <form method="POST" action="/shop/checkout/" id="trackerform">{% csrf_token %}
           <input type="hidden" name="itemjson" id="itemjson">
+          <input type="hidden" name="amount" id="amount">
   <div class="form-row">
       <div class="form-group col-md-6">
       <label for="inputname">Name</label>
@@ -98,9 +99,10 @@ if (localStorage.getItem('cart') == null) {
     document.getElementById('totalPrice').innerHTML = totalPrice;
     $('#itemjson').val(JSON.stringify(cart));
     {% if thank %}
-    alert("Thanks for ordering from my awesome cart your order id is {{idu}}. Track the order from our tracker page.")
+    alert("Thanks for ordering from my awesome cart your order id is {{idu}}. Track the order from our tracker page.");
     localStorage.clear();
     document.location = "/shop";
     {% endif %}
+    $('#amount').val($('#totalPrice').html())
 </script>
 {% endblock %}
