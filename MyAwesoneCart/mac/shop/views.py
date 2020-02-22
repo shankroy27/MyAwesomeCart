@@ -24,6 +24,36 @@ def index(request):
     params = {'allprods':allprods}
     return render(request,'shop/index.html',params)
 
+def searchMAtch(query,item):
+    if query in item.desc.lower() or query in item.product_name.lower() or query in item.category.lower():
+        return True
+    else:
+        return False
+
+def search(request):
+    query = request.GET.get('search')
+    allprods = []
+    prod = []
+    catprods = product.objects.values('category' , 'id')
+    cats = {item['category'] for item in catprods }
+    # print(cat)
+    for cat in cats:
+        prodtemp = product.objects.filter(category=cat)
+        for item in prodtemp:
+            if searchMAtch(query,item):
+                prod.append(item)
+        #prod = [item for item in prodtemp if searchMAtch(query,item)]
+        print(prod)
+        n = len(prod)
+        nSlides = n // 4 + ceil((n / 4) - (n // 4))
+        if len(prod) != 0:
+            allprods.append([prod, range(1 , nSlides) , nSlides])
+    # params = {'no_of_slides' : nSlides , 'products': prod , 'range': range(1,nSlides)}
+    params = {'allprods':allprods,'msg':''}
+    if len(allprods) == 0 or len(query)<3:
+            params = {'msg':'Please enter proper search query. No iterm found!'}
+    return render(request,'shop/search.html',params)
+
 def about(request):
     return render(request,"shop/About.html")
 
@@ -61,8 +91,7 @@ def tracker(request):
     return render(request,"shop/tracker.html")
 
 
-def search(request):
-    return render(request, "shop/search.html")
+
 
 def productview(request,myid):
     prod = product.objects.filter(id=myid)
